@@ -100,7 +100,7 @@ similarly::
     #                                                [-0. ,  4.2,  0. ],
     #                                                [-0. ,  0. ,  0.5]]]))
 
-This essentially just performed the "**2" operator on each object individually,
+This essentially just performed the ``**2`` operator on each object individually,
 so we can see the derivatives for each array index and how they are not
 dependent on each other. Using standard indexing operations, we can access the
 individual elements of an AD multivariate object::
@@ -205,7 +205,7 @@ approximating Taylor polynomials::
     plt.legend(loc=0)
     plt.show()
 
-.. image:: taylorfunc_example.png
+.. image:: https://raw.github.com/tisimst/adipy/master/taylorfunc_example.png
 
 Notice that at x=1.5, all the approximations are perfectly accurate (as we 
 would expect) and error increases as the approximation moves farther from that

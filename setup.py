@@ -13,7 +13,7 @@ setup(
     description='Automatic Differentiation for Python',
     url='https://github.com/tisimst/adipy',
     license='BSD License',
-    long_description=read('README.md'),
+    long_description=read('README.rst'),
     packages=['adipy'],
     install_requires=['numpy'],
     keywords=[

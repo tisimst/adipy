@@ -14,14 +14,13 @@ NOTES:
 3. Jacobian matrix generator
 4. Univariate Taylor Series function generator
    
+Copyright 2013: Abraham Lee
+
 """
 
 from __future__ import division
 import numpy as np
 from math import factorial
-
-__author__ = 'Abraham Lee'
-__version__ = '0.5'
 
 class ad(object):
 

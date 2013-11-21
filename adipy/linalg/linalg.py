@@ -25,7 +25,7 @@ author.
 from __future__ import division
 import numpy as np
 
-__all__ = ['np', 'chol', 'qr', 'lu', 'solve', 'lstsq', 'inv']
+__all__ = ['np', 'chol', 'qr', 'lu', 'solve', 'lstsq', 'inv', 'norm']
 
 ###############################################################################
 
@@ -437,6 +437,39 @@ def inv(A):
     shape = np.atleast_2d(A).shape
     assert shape[0]==shape[1], 'Matrix must be square'
     return solve(A, np.eye(shape[0]))
+
+###############################################################################
+
+def norm(A):
+    """
+    Calculate the Frobenius norm of a matrix or vector, which is defined as
+    the square root of the sum of the absolute squares of its elements.
+    
+    Parameters
+    ----------
+    A : array
+        The input matrix or vector
+        
+    Returns
+    -------
+    N : scalar
+        The inverse of A
+    
+    Example
+    -------
+    ::
+
+        >>> A = [[25, 15, -5], 
+        ...      [15, 18,  0], 
+        ...      [-5,  0, 11]]
+        ...
+        >>> N = norm(A)
+        >>> N
+        XXXX
+       
+    """
+    A = np.atleast_2d(A).ravel()
+    return (np.sum(np.abs(A)**2))**0.5
     
 ###############################################################################
 #

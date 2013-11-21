@@ -229,6 +229,9 @@ Several linear algebra routines are available that are AD-compatible:
   - Least squares solver (``lstsq``)
   - Matrix inverse (``inv``)
 
+These require a separate import ``import adipy.linalg``, then they can be
+using something like ``adipy.linalg.solve(...)``.
+
 See the source code for relevant documentation and examples. If you are 
 familiar with NumPy's versions, you will find these easy to use.
 

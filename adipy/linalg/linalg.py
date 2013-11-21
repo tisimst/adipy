@@ -12,6 +12,9 @@ Solving equations and inverting matrices
     a. solve (Solve a linear matrix equation, or system of linear scalar eqs)
     b. lstsq (Solve a linear least squares problem)
     c. inv (Compute the (multiplicative) inverse of a matrix)
+
+Calculating matrix norms
+    a. norm (Frobenius norm, or 2-norm)
     
 (c) 2013 by Abraham Lee <tisimst@gmail.com>.
 Please send feature requests, bug reports, or feedback to this address.

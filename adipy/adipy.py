@@ -150,7 +150,37 @@ class ad(object):
         return ad(other**self.val, other**self.val*log(other)*self.der)
     
     def __abs__(self):
-        return (self**2)**0.5
+        if self==0:
+            return ad(0*self.val, 0*self.der)
+        else:
+            return (self**2)**0.5
+    
+    def __eq__(self, other):
+        if isinstance(other, ad):
+            return self.nom==other.nom
+        else:
+            return self.nom==other
+        
+    def __lt__(self, other):
+        if isinstance(other, ad):
+            return self.nom<other.nom
+        else:
+            return self.nom<other
+        
+    def __le__(self, other):
+        return self<other or self==other
+    
+    def __gt__(self, other):
+        return not self<=other
+    
+    def __ge__(self, other):
+        return not self<other
+    
+    def __ne__(self, other):
+        return not self==other
+    
+    def __nonzero__(self):
+        return self!=0
         
 def adn(nom, order=1):
     """

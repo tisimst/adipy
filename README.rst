@@ -228,6 +228,10 @@ Several linear algebra routines are available that are AD-compatible:
   - General solver, with support for multiple outputs (``solve``)
   - Least squares solver (``lstsq``)
   - Matrix inverse (``inv``)
+  
+- Matrix Norms
+
+  - Frobenius norm, or 2-norm (``norm``)
 
 These require a separate import ``import adipy.linalg``, then they can be
 using something like ``adipy.linalg.solve(...)``.

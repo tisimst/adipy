@@ -8,6 +8,7 @@ import numpy as np
 from scipy.optimize import root
 import matplotlib.pyplot as plt
 from adipy import *
+import adipy.linalg
 from time import time
 
 # ----------------------------------------------------------------------
@@ -22,7 +23,7 @@ def main():
     tol = 1.0e-8
 
     # create x vector and d/dx^2 operator
-    x, D = chebyshev(N)
+    x, D, I = chebyshev(N, True)
     D2 = np.dot(D,D)
 
     # initial guess
@@ -95,7 +96,7 @@ def chebyshev(N, integration=False):
 
     # I operator
     if integration:
-        I = np.linalg.inv(D[1:, 1:])
+        I = adipy.linalg.inv(D[1:, 1:])
         I = np.append(np.zeros((1, N - 1)), I, axis=0)
         I = np.append(np.zeros((N, 1)), I, axis=1)
         return x, D, I

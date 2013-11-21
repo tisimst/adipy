@@ -2,13 +2,14 @@
 ADiPy, Automatic Differentiation for Python
 ==============================================
 
-ADiPy is a fast, pure-python automatic differentiation library. This package 
-provides the following functionality:
+ADiPy is a fast, pure-python automatic differentiation (AD) library. This 
+package provides the following functionality:
 
 - Arbitrary order univariate differentiation
 - First-order multivariate differentiation
 - Univariate Taylor polynomial function generator
 - Jacobian matrix generator
+- Compatible linear algebra routines
 
 Installation
 ------------
@@ -18,8 +19,8 @@ To install ``adipy``, simply do one of the following in a terminal window
 
 - Download the tarball, unzip, then run ``python setup.py install`` in the 
   unzipped directory.
-- Run ``easy_install --upgrade adipy``
-- Run ``pip install --upgrade adipy``
+- Run ``easy_install [--upgrade] adipy``
+- Run ``pip install [--upgrade] adipy``
 
 Where to Start
 --------------
@@ -88,8 +89,8 @@ at the nominal value.
 Multivariate Examples
 ---------------------
 
-For multivariate sessions, things look a little bit different, but behave
-similarly::
+For multivariate sessions, things look a little bit different and can only
+handle first derivatives (for the time being), but behave similarly::
 
     x = ad(np.array([-1, 2.1, 0.25]))
     
@@ -210,6 +211,26 @@ approximating Taylor polynomials::
 Notice that at x=1.5, all the approximations are perfectly accurate (as we 
 would expect) and error increases as the approximation moves farther from that
 point, but less so with the increase in the order of the approximation.
+
+Linear Algebra
+--------------
+
+Several linear algebra routines are available that are AD-compatible:
+
+- Decompositions
+
+  - Cholesky (``chol``)
+  - QR (``qr``)
+  - LU (``lu``)
+
+- Linear System solvers
+
+  - General solver, with support for multiple outputs (``solve``)
+  - Least squares solver (``lstsq``)
+  - Matrix inverse (``inv``)
+
+See the source code for relevant documentation and examples. If you are 
+familiar with NumPy's versions, you will find these easy to use.
 
 Support
 -------

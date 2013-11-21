@@ -20,7 +20,8 @@ setup(
         'automatic differentiation',
         'algorithmic differentiation',
         'arbitrary order',
-        'python'
+        'python',
+        'linear algebra',
         ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

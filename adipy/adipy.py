@@ -21,6 +21,7 @@ Copyright 2013: Abraham Lee
 from __future__ import division
 import numpy as np
 from math import factorial
+import copy
 
 class ad(object):
 
@@ -46,6 +47,9 @@ class ad(object):
             self.val = nom
             self.der = der
     
+    def copy(self):
+        return copy.copy(self)
+        
     @property
     def nom(self):
         """

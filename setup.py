@@ -14,7 +14,7 @@ setup(
     url='https://github.com/tisimst/adipy',
     license='BSD License',
     long_description=read('README.rst'),
-    packages=['adipy'],
+    packages=['adipy', 'adipy.linalg'],
     install_requires=['numpy'],
     keywords=[
         'automatic differentiation',

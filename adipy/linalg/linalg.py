@@ -1,6 +1,8 @@
+#!/usr/bin/env python
+
 """
 This sub-module allows for the usage of several linear algebra routines that
-are otherwise unavailable for use for automatic differentiation. Not all 
+are otherwise unavailable for use for automatic differentiation. Not all
 numpy.linalg routines have an equivalent here, but we're working on it.
 
 Decompositions
@@ -15,7 +17,7 @@ Solving equations and inverting matrices
 
 Calculating matrix norms
     a. norm (Frobenius norm, or 2-norm)
-    
+
 (c) 2013 by Abraham Lee <tisimst@gmail.com>.
 Please send feature requests, bug reports, or feedback to this address.
 
@@ -28,6 +30,10 @@ author.
 from __future__ import division
 import numpy as np
 
+import sys
+if sys.version_info.major == 2:
+	range = xrange
+
 __all__ = ['np', 'chol', 'qr', 'lu', 'solve', 'lstsq', 'inv', 'norm']
 
 ###############################################################################
@@ -37,31 +43,31 @@ def chol(A, side='lower'):
     Cholesky decomposition of a symmetric, positive-definite matrix, defined
     by A = L*L.T = U.T*U, where L is a lower triangular matrix and U is an
     upper triangular matrix.
-    
+
     Parameters
     ----------
     A : 2d-array
         The input matrix
-    
+
     Optional
     --------
     side : str
         If 'lower' (default), then the lower triangular form of the
         decompostion is returned. If 'upper', then the upper triangular
         form of the decomposition is returned (the transpose of 'lower')
-    
+
     Returns
     -------
     L : 2d-array
         The lower (or upper) triangular matrix that helps define the
         decomposition.
-    
+
     Example
     -------
     Example 1::
-    
-        >>> A = [[25, 15, -5], 
-        ...      [15, 18,  0], 
+
+        >>> A = [[25, 15, -5],
+        ...      [15, 18,  0],
         ...      [-5,  0, 11]]
         ...
         >>> L = chol(A)
@@ -74,12 +80,12 @@ def chol(A, side='lower'):
         array([[ 5.,  3., -1.],
                [ 0.,  3.,  1.],
                [ 0.,  0.,  3.]])
-        
+
     Example 2::
-    
-        >>> A = [[18, 22,  54,  42], 
-        ...      [22, 70,  86,  62], 
-        ...      [54, 86, 174, 134], 
+
+        >>> A = [[18, 22,  54,  42],
+        ...      [22, 70,  86,  62],
+        ...      [54, 86, 174, 134],
         ...      [42, 62, 134, 106]]
         ...
         >>> L = chol(A)
@@ -88,18 +94,18 @@ def chol(A, side='lower'):
                [  5.18544973,   6.5659052 ,   0.        ,   0.        ],
                [ 12.72792206,   3.0460385 ,   1.64974225,   0.        ],
                [  9.89949494,   1.62455386,   1.84971101,   1.39262125]])
-           
+
     """
     A = np.array(A)
     assert A.shape[0]==A.shape[1], 'Input matrix must be square'
-    
-    L = [[0.0] * len(A) for _ in xrange(len(A))]
-    for i in xrange(len(A)):
-        for j in xrange(i+1):
-            s = sum(L[i][k] * L[j][k] for k in xrange(j))
+
+    L = [[0.0] * len(A) for _ in range(len(A))]
+    for i in range(len(A)):
+        for j in range(i+1):
+            s = sum(L[i][k] * L[j][k] for k in range(j))
             L[i][j] = (A[i][i] - s)**0.5 if (i == j) else \
                       (1.0 / L[j][j] * (A[i][j] - s))
-                          
+
     if side=='lower':
         return np.array(L)
     elif side=='upper':
@@ -110,25 +116,25 @@ def chol(A, side='lower'):
 def qr(A):
     """
     QR Decomposition
-    
+
     Parameters
     ----------
     A : 2d-array
         The input matrix (need not be square).
-    
+
     Returns
     -------
     qm : 2d-array
         The orthogonal Q matrix from the decomposition
     rm : 2d-array
         The R matrix from the decomposition
-    
+
     Example
     -------
     A square input matrix::
-    
-        >>> A = [[12, -51,   4], 
-        ...      [ 6, 167, -68], 
+
+        >>> A = [[12, -51,   4],
+        ...      [ 6, 167, -68],
         ...      [-4,  24, -41]]
         ...
         >>> q, r = qr(A)
@@ -142,11 +148,11 @@ def qr(A):
                [  4.47505281e-16,   0.00000000e+00,  -3.50000000e+01]])
 
     A non-square input matrix::
-    
-        >>> A = [[12, -51,   4], 
-        ...      [ 6, 167, -68], 
-        ...      [-4,  24, -41], 
-        ...      [-1,   1,   0], 
+
+        >>> A = [[12, -51,   4],
+        ...      [ 6, 167, -68],
+        ...      [-4,  24, -41],
+        ...      [-1,   1,   0],
         ...      [ 2,   0,   3]]
         ...
         >>> q, r = qr(A)
@@ -165,31 +171,31 @@ def qr(A):
         >>> import numpy as np
         >>> np.all(np.dot(q, r) - A<1e-12)
         True
-        
+
     """
     A = np.atleast_2d(A)
     m, n = A.shape
     qm = np.eye(m)
     rm = A.copy()
-    for i in xrange(n-1 if m==n else n):
+    for i in range(n-1 if m==n else n):
         x = getSubmatrix(rm, i, i, m, i)
         h = np.eye(m)
         h = setSubmatrix(h, i, i, householder(x))
         qm = np.dot(qm, h)
         rm = np.dot(h, rm)
     return qm, rm
-    
+
 ###############################################################################
 
 def lu(A):
     """
     Decomposes a nxn matrix A by PA=LU and returns L, U and P.
-    
+
     Parameters
     ----------
     A : 2d-array
         The input matrix
-   
+
     Returns
     -------
     L : 2d-array
@@ -198,11 +204,11 @@ def lu(A):
         The upper-triangular matrix of the decomposition
     P : 2d-array
         The pivoting matrix used in the decomposition
-    
+
     Examples
     --------
     Example 1::
-    
+
         >>> A = [[1, 3, 5],
         ...      [2, 4, 7],
         ...      [1, 1, 0]]
@@ -220,12 +226,12 @@ def lu(A):
         array([[ 0.,  1.,  0.],
                [ 1.,  0.,  0.],
                [ 0.,  0.,  1.]])
-    
+
     Example 2::
 
-        >>> A = [[11,  9, 24, 2], 
-        ...      [ 1,  5,  2, 6], 
-        ...      [ 3, 17, 18, 1], 
+        >>> A = [[11,  9, 24, 2],
+        ...      [ 1,  5,  2, 6],
+        ...      [ 3, 17, 18, 1],
         ...      [ 2,  5,  7, 1]]
         ...
         >>> L, U, P = lu(A)
@@ -244,40 +250,40 @@ def lu(A):
                [ 0.,  0.,  1.,  0.],
                [ 0.,  1.,  0.,  0.],
                [ 0.,  0.,  0.,  1.]])
-       
+
     """
     A = np.array(A)
     assert A.shape[0]==A.shape[1], 'Input matrix must be square'
-    
+
     n = len(A)
-    L = [[0.0]*n for i in xrange(n)]
-    U = [[0.0]*n for i in xrange(n)]
-    
+    L = [[0.0]*n for i in range(n)]
+    U = [[0.0]*n for i in range(n)]
+
     # Create the pivoting matrix for A
-    P = [[float(i == j) for i in xrange(n)] for j in xrange(n)]
-    for j in xrange(n):
-        row = max(xrange(j, n), key=lambda i: A[i][j])
+    P = [[float(i == j) for i in range(n)] for j in range(n)]
+    for j in range(n):
+        row = max(range(j, n), key=lambda i: A[i][j])
         if j != row:
             P[j], P[row] = P[row], P[j]
-    
+
     A2 = np.dot(P, A)
-    for j in xrange(n):
+    for j in range(n):
         L[j][j] = 1.0
-        for i in xrange(j+1):
-            s1 = sum(U[k][j] * L[i][k] for k in xrange(i))
+        for i in range(j+1):
+            s1 = sum(U[k][j] * L[i][k] for k in range(i))
             U[i][j] = A2[i][j] - s1
-        for i in xrange(j, n):
-            s2 = sum(U[k][j] * L[i][k] for k in xrange(j))
+        for i in range(j, n):
+            s2 = sum(U[k][j] * L[i][k] for k in range(j))
             L[i][j] = (A2[i][j] - s2) / U[j][j]
     return (np.array(L), np.array(U), np.array(P))
-    
-    
+
+
 ###############################################################################
 
 def solve(A, b):
     """
     Solve a system of equations Ax = b by Gaussian elimination
-    
+
     Parameters
     ----------
     A : 2d-array
@@ -287,22 +293,22 @@ def solve(A, b):
         The RHS of the system of equations (must have the same number of rows
         as ``A``. If more than one column is given, a solution is generated for
         each column
-        
+
     Returns
     -------
     x : array-like
         The solution that satisifies the equality ``Ax==b``. If multiple ``b``
         are given, a solution column will be given satisfying each set.
-    
+
     Example
     -------
     ::
-    
+
         >>> A = [[1, 2, 1], [4, 6, 3], [9, 8, 2]]
         >>> b = [3, 2, 1]
         >>> solve(A, b)
         array([ -7.,  11., -12.])
-        
+
     """
     try:
         A = np.matrix(A)
@@ -312,51 +318,51 @@ def solve(A, b):
     b = np.array(b)
     numout = 1 if b.ndim==1 else b.shape[1]
     assert A.shape[0]==b.shape[0], 'b must have the same number of rows as A'
-    
+
     # Make the LHS array square if it isn't already and adjust RHS if needed
     if A.shape[0]>A.shape[1]:
         b = A.T*b
         A = A.T*A
-        
+
     eqs = np.column_stack((A, b))
     n, m = eqs.shape
-    
+
     # Forward substitution
     for k in range(n-1):
         # Pivot test
         p = k
         piv_el = abs(eqs[k, k])
-        
+
         for i in range(k + 1, n):
             tmp = abs(eqs[i, k])
             if tmp>piv_el:
                 piv_el = tmp
                 p = i
-        
+
         # Swap the kth and pth rows if a pivot element was found
         if p!=k:
             rtmp = np.array(eqs[p, :])
             eqs[p, :] = eqs[k, :]
             eqs[k, :] = rtmp
-        
+
         for i in range(k + 1, n):
             f = 1.*eqs[i, k]/eqs[k, k]
             for j in range(k, m):
                 eqs[i, j] -= f*eqs[k, j]
-    
+
     # Backward substitution
     for k in range(1, n)[::-1]:
         for i in range(k)[::-1]:
             f = 1.*eqs[i, k]/eqs[k, k]
             for j in range(m)[::-1]:
                 eqs[i, j] -= f*eqs[k, j]
-    
+
     # Normalize
     for i in range(n):
         x = 1.*eqs[i, i]
         for j in range(m):
             eqs[i, j] = eqs[i, j]/x
-    
+
     if numout==1:
         return np.array(eqs[:, -(m-n):]).ravel()
     else:
@@ -367,23 +373,23 @@ def solve(A, b):
 def lstsq(A, b):
     """
     Solve Ax = b with the linear least squares method.
-    
+
     Parameters
     ----------
     A : 2d-array
         The linear system matrix
     b : array
         The right-hand-side of the equation
-    
+
     Returns
     -------
     x : array
         The solution to the system of equations
-    
+
     Example
     -------
     (Taken from the NumPy lstsq example)::
-    
+
         >>> x = np.array([0, 1, 2, 3])
         >>> y = np.array([-1, 0.2, 0.9, 2.1])
         >>> A = np.vstack([x, np.ones(len(x))]).T
@@ -394,11 +400,11 @@ def lstsq(A, b):
                [ 3.,  1.]])
         >>> print lstsq(A, y)
         [ 1.   -0.95]
-               
+
     """
     q, r = qr(A)
     n = r.shape[1]
-    x = solveUpperTriangular(getSubmatrix(r, 0, 0, n - 1, n - 1), 
+    x = solveUpperTriangular(getSubmatrix(r, 0, 0, n - 1, n - 1),
         np.dot(q.T, b))
     return x.ravel()
 
@@ -407,23 +413,23 @@ def lstsq(A, b):
 def inv(A):
     """
     Calculate the multiplicative inverse of a matrix.
-    
+
     Parameters
     ----------
     A : 2d-array
         The input matrix
-        
+
     Returns
     -------
     Ainv : 2d-array
         The inverse of A
-    
+
     Example
     -------
     ::
 
-        >>> A = [[25, 15, -5], 
-        ...      [15, 18,  0], 
+        >>> A = [[25, 15, -5],
+        ...      [15, 18,  0],
         ...      [-5,  0, 11]]
         ...
         >>> Ainv = inv(A)
@@ -435,7 +441,7 @@ def inv(A):
         array([[  1.00000000e+00,   0.00000000e+00,   0.00000000e+00],
                [  2.77555756e-16,   1.00000000e+00,   0.00000000e+00],
                [  0.00000000e+00,   1.11022302e-16,   1.00000000e+00]])
-       
+
     """
     shape = np.atleast_2d(A).shape
     assert shape[0]==shape[1], 'Matrix must be square'
@@ -447,33 +453,33 @@ def norm(A):
     """
     Calculate the Frobenius norm of a matrix or vector, which is defined as
     the square root of the sum of the absolute squares of its elements.
-    
+
     Parameters
     ----------
     A : array
         The input matrix or vector
-        
+
     Returns
     -------
     N : scalar
         The inverse of A
-    
+
     Example
     -------
     ::
 
-        >>> A = [[25, 15, -5], 
-        ...      [15, 18,  0], 
+        >>> A = [[25, 15, -5],
+        ...      [15, 18,  0],
         ...      [-5,  0, 11]]
         ...
         >>> N = norm(A)
         >>> N
         XXXX
-       
+
     """
     A = np.atleast_2d(A).ravel()
     return (np.sum(np.abs(A)**2))**0.5
-    
+
 ###############################################################################
 #
 #
@@ -488,7 +494,7 @@ def ematrix(m, n, x, i, j):
     a[:, :] = 0.0
     a[i, j] = x
     return a
-    
+
 def unitVector(n):
     return ematrix(n, 1, 1, 0, 0)
 
@@ -524,9 +530,9 @@ def setSubmatrix(obj, i1, j1, subobj):
 def solveUpperTriangular(r, b):
     r = np.atleast_2d(r)
     n = r.shape[1]
-    
+
     x = np.zeros((n, 1))
-    for k in xrange(n - 1, -1, -1):
+    for k in range(n - 1, -1, -1):
         idx = min(n - 1, k)
         x[k, 0] = (b[k] - np.dot(getSubmatrix(r, k, idx, k, n - 1),
             getSubmatrix(x, idx, 0, n - 1, 0)))/r[k, k]
@@ -535,7 +541,7 @@ def solveUpperTriangular(r, b):
 def polyfit(x, y, n):
     """
     Fit a polynomial of order n to data arrays x and y
-    
+
     Parameters
     ----------
     x : array
@@ -544,24 +550,24 @@ def polyfit(x, y, n):
         A data array that defines the second dimension coordinates.
     n : int
         The order of the polynomial (e.g., 1 for linear, 2 for quadratic, etc.)
-    
+
     Returns
     -------
     b : array
         The polynomial coefficients, in ascending order.
-    
+
     Example
     -------
     ::
-    
+
         >>> x = range(11)
         >>> y = [1, 6, 17, 34, 57, 86, 121, 162, 209, 262, 321]
         >>> polyfit(x, y, 2)
         array([ 1.,  2.,  3.])
-        
+
     """
     a = np.empty((len(x), n + 1))
-    for i in xrange(a.shape[0]):
-        for j in xrange(a.shape[1]):
+    for i in range(a.shape[0]):
+        for j in range(a.shape[1]):
             a[i, j] = 1 if j==0 else x[i]**j
     return lstsq(a, y)
